@@ -1,3 +1,4 @@
+exception Invalid_argument of string;;                                                   (**)
 let rec concatenate l1 l2 = match l1 with
     | [] -> l2
     | e::l -> e::(concatenate l l2);;
@@ -29,9 +30,9 @@ let readInt l =
         | '8'::tail -> readIntImpl_ tail (n*10 + 8)
         | '9'::tail -> readIntImpl_ tail (n*10 + 9)
         | head::tail -> (n,current_list)
-        | [] -> (n,[]) ;(*error*)
+        | [] -> (n,[]) ;
     in match l with
-        | [] -> (-1,[])
+        | [] -> raise (Invalid_argument "Invalid input")
         | head::tail -> readIntImpl_ l 0;;
 
 let isNumeric c =
@@ -44,27 +45,24 @@ let getSubString l =
     let rec getSubStringImpl_ l = match l with
         | [] -> [],[]
         | h::t when isNumeric(String.make 1 h) = true -> [], h::t
-        | h::t when isNumeric(String.make 1 h) = false -> h::fst(getSubStringImpl_ t), snd(getSubStringImpl_ t);
+        | h::t-> h::fst(getSubStringImpl_ t), snd(getSubStringImpl_ t);
     in match l with
         | [] -> [],[]
-        | h::t -> getSubStringImpl_ l;;
+        | h::t when isNumeric(String.make 1 h) = false -> getSubStringImpl_ l
+		| _ -> raise (Invalid_argument "Invalid input");;
 
 let decompress l =
     let rec decompressImpl_ current_list = match current_list with
         | [] -> []
-        | h::t when isNumeric(String.make 1 h) = true ->
+        | h::t->
 		repeater
 		(fst(readInt(current_list)))
 		(fst(getSubString(snd(readInt(current_list)))))
 		(decompressImpl_ ((snd(getSubString(snd(readInt(current_list)))))))
-        | h::t when isNumeric(String.make 1 h) = false ->
-		repeater
-		1
-		(fst(getSubString(snd(readInt(t)))))
-		(decompressImpl_ (snd(getSubString(snd(readInt(t))))));
     in match l with
         | [] -> []
-        | h::t -> decompressImpl_ l;;
+        | h::t when isNumeric(String.make 1 h) -> decompressImpl_ l
+		| _ -> raise (Invalid_argument "Invalid input, list must start with a digit");;
 
 
 (*test*)

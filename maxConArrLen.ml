@@ -1,6 +1,7 @@
 open Printf
 open Char;;
 let liste = [9; 11; 12; 13; 14; 0];;
+exception Invalid_argument of string;;
 let conArrLen l =
   let rec recConArrLen l depth formerHead =
     match l with
@@ -10,7 +11,7 @@ let conArrLen l =
     else 0;
 	
   in match l with
-    | [] -> 0
+    | [] -> raise (Invalid_argument "Invalid list")
     | head::tail -> recConArrLen l 0 0;;
 
 let maxConArrLen l =
@@ -21,7 +22,7 @@ let maxConArrLen l =
     else recMaxConArrLen tail (index+1) maxLen indexOfMax;
     
   in match l with
-    | [] -> (0,0)
+    | [] -> raise (Invalid_argument "Invalid list")
     | head::tail -> recMaxConArrLen l 0 0 0;;
 
 if maxConArrLen [1; 2] <> (0,2) then
